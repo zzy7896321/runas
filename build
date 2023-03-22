@@ -1,0 +1,23 @@
+#!/bin/bash
+
+BASEDIR="$(cd "`dirname "$0"`" && pwd)"
+
+if [ $# -lt 1 ]; then
+    echo "usage: $0 <prog>"
+    exit 1
+fi
+
+PROG="$1"
+USR="$USER"
+
+if [ -z "`echo "$PROG" | grep '^/'`" ]; then
+    echo "'$PROG' is not an absolute path"
+    exit 1
+fi
+
+BASENAME="`basename "$PROG"`"
+OUTPUT="$BASENAME-$USR"
+gcc -O2 -o "$OUTPUT" -DPROG="$PROG" "$BASEDIR/runas.c" || exit 1
+chmod 755 "$OUTPUT"
+chmod u+s "$OUTPUT"
+chmod g+s "$OUTPUT"
